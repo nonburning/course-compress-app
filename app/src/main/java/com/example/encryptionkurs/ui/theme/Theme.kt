@@ -13,7 +13,9 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.core.view.WindowCompat
+import com.example.encryptionkurs.R
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -37,9 +39,15 @@ private val LightColorScheme = lightColorScheme(
     */
 )
 
+val provider = GoogleFont.Provider(
+    providerAuthority = "com.google.android.gms.fonts",
+    providerPackage = "com.google.android.gms",
+    certificates = R.array.com_google_android_gms_fonts_certs
+)
+
 @Composable
 fun EncryptionKursTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = false,
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
