@@ -1,13 +1,17 @@
 package com.example.encryptionkurs.di
 
+import com.example.encryptionkurs.data.EncryptionRepositoryImpl
 import com.example.encryptionkurs.data.api.ApiService
+import com.example.encryptionkurs.domain.EncryptionRepository
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
+import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -19,7 +23,7 @@ class NetworkModule {
 
 
     private val BASE_URL = "http://localhost:8080/rel/"
-    val contentType = "application/json".toMediaType()
+    private val contentType = "application/json".toMediaType()
 
     private val json = Json {
         ignoreUnknownKeys = true
@@ -51,5 +55,12 @@ class NetworkModule {
     @Singleton
     @Provides
     fun provideApiService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideEncryptionRepository(apiService: ApiService): EncryptionRepository =
+        EncryptionRepositoryImpl(
+            apiService
+        )
 
 }

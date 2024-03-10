@@ -33,11 +33,14 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.encryptionkurs.ui.EncryptionViewModel
 import com.example.encryptionkurs.ui.theme.jetFontFamily
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,17 +61,25 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CompressItScreen() {
+fun CompressItScreen(
+) {
     var inputText by remember { mutableStateOf(TextFieldValue("")) }
-    var outputText by remember { mutableStateOf("") }
     var chosenButton by remember {
         mutableStateOf(0)
     }
+    val viewModel: EncryptionViewModel = hiltViewModel()
+
+    val outputText by viewModel.outputDataState.collectAsState()
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Compress It!", fontFamily = jetFontFamily) },
+                title = {
+                    Text(
+                        "Compress It!", fontFamily = jetFontFamily,
+                        fontStyle = FontStyle.Italic
+                    )
+                },
                 colors = centerAlignedTopAppBarColors(
                     containerColor = Color(0xFFd9d9d9)
                 ),
@@ -193,7 +204,13 @@ fun CompressItScreen() {
                     .height(IntrinsicSize.Min)
             ) {
                 Button(
-                    onClick = { /* Handle Encode */ },
+                    onClick = {
+                        viewModel.proceedData(
+                            dataToEncrypt = inputText.text,
+                            algorithm = chosenButton,
+                            operation = "encode"
+                        )
+                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFFd9d9d9),
                         contentColor = Color.Black
@@ -218,7 +235,13 @@ fun CompressItScreen() {
                 Spacer(modifier = Modifier.width(14.dp))
 
                 Button(
-                    onClick = { /* Handle Decode */ },
+                    onClick = {
+                        viewModel.proceedData(
+                            dataToEncrypt = inputText.text,
+                            algorithm = chosenButton,
+                            operation = "decode"
+                        )
+                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFFd9d9d9),
                         contentColor = Color.Black
@@ -228,7 +251,7 @@ fun CompressItScreen() {
                     Text(
                         "Decode",
                         fontFamily = jetFontFamily,
-                        fontWeight = FontWeight(500)
+                        fontWeight = FontWeight(700)
                     )
                 }
             }
@@ -238,7 +261,7 @@ fun CompressItScreen() {
             Text(
                 "Output",
                 fontFamily = jetFontFamily,
-                fontWeight = FontWeight(700),
+                fontWeight = FontWeight(600),
                 fontStyle = FontStyle.Italic,
                 modifier = Modifier.align(Alignment.Start),
             )
@@ -250,7 +273,7 @@ fun CompressItScreen() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(100.dp, Dp.Infinity),
-                onValueChange = { outputText = it },
+                onValueChange = { },
                 textStyle = TextStyle(
                     fontFamily = jetFontFamily,
                     fontStyle = FontStyle.Italic
