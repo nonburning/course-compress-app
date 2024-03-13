@@ -3,6 +3,7 @@ package com.example.encryptionkurs.domain
 import com.example.encryptionkurs.domain.model.EncodeDecodeRequestModel
 
 interface EncryptionRepository {
+
     suspend fun proceedData(
         dataToEncrypt: String,
         algorithm: Int,
@@ -10,6 +11,7 @@ interface EncryptionRepository {
     ): Result<EncodeDecodeRequestModel>
 
     fun getCurrentUrl(): String
+
     suspend fun changeCurrentUrl(url: String)
 
 }
