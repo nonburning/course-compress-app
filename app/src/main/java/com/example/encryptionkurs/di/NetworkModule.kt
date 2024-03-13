@@ -1,5 +1,7 @@
 package com.example.encryptionkurs.di
 
+import android.content.Context
+import android.content.SharedPreferences
 import com.example.encryptionkurs.data.EncryptionRepositoryImpl
 import com.example.encryptionkurs.data.api.ApiService
 import com.example.encryptionkurs.domain.EncryptionRepository
@@ -7,6 +9,7 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType
@@ -22,7 +25,6 @@ import javax.inject.Singleton
 class NetworkModule {
 
 
-    private val BASE_URL = "http://localhost:8080/rel/"
     private val contentType = "application/json".toMediaType()
 
     private val json = Json {
@@ -46,8 +48,9 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient) = Retrofit.Builder()
-        .baseUrl(BASE_URL)
+    fun provideRetrofit(okHttpClient: OkHttpClient, sharedPreferences: SharedPreferences) = Retrofit.Builder()
+        .baseUrl(sharedPreferences.getString("api_url", "https://684a-77-121-152-86.ngrok-free.app/")
+            ?: "https://684a-77-121-152-86.ngrok-free.app/")
         .addConverterFactory(json.asConverterFactory(contentType))
         .client(okHttpClient)
         .build()
@@ -58,9 +61,19 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun provideEncryptionRepository(apiService: ApiService): EncryptionRepository =
+    fun provideEncryptionRepository(
+        apiService: ApiService,
+        sharedPreferences: SharedPreferences,
+    ): EncryptionRepository =
         EncryptionRepositoryImpl(
-            apiService
+            apiService, sharedPreferences
+        )
+
+    @Singleton
+    @Provides
+    fun provideSharedPreferences(@ApplicationContext appContext: Context): SharedPreferences =
+        appContext.getSharedPreferences(
+            "shared_prefs", Context.MODE_PRIVATE
         )
 
 }

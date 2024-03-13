@@ -3,6 +3,7 @@ package com.example.encryptionkurs
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -63,13 +64,20 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun CompressItScreen(
 ) {
-    var inputText by remember { mutableStateOf(TextFieldValue("")) }
+    var inputText by remember { mutableStateOf(TextFieldValue("lorem ipsum")) }
     var chosenButton by remember {
         mutableStateOf(0)
     }
+
+    var isDevVisible by remember {
+        mutableStateOf(false)
+    }
+
     val viewModel: EncryptionViewModel = hiltViewModel()
 
     val outputText by viewModel.outputDataState.collectAsState()
+    val currentUrl by viewModel.currentUrlState.collectAsState()
+    var currentUrlText by remember { mutableStateOf(TextFieldValue(currentUrl)) }
 
     Scaffold(
         topBar = {
@@ -83,6 +91,9 @@ fun CompressItScreen(
                 colors = centerAlignedTopAppBarColors(
                     containerColor = Color(0xFFd9d9d9)
                 ),
+                modifier = Modifier.clickable {
+                    isDevVisible = !isDevVisible
+                }
             )
         }
     ) { innerPadding ->
@@ -285,8 +296,27 @@ fun CompressItScreen(
                     containerColor = Color(0xFFd9d9d9)
                 )
             )
+
+            if (isDevVisible) {
+                Spacer(modifier = Modifier.height(10.dp))
+                OutlinedTextField (
+                    value = currentUrlText,
+                    onValueChange = {
+                        currentUrlText = it
+                    }
+                )
+
+                Button(onClick = {
+                    isDevVisible = false
+                    viewModel.saveUrl(currentUrlText.text) }
+                ) {
+                    Text("save")
+                }
+            }
+
         }
     }
+
 }
 
 @Preview(showBackground = true)
