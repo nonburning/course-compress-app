@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.util.Base64
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,7 +37,7 @@ class EncryptionViewModel @Inject constructor(
                 val data = result.getOrNull()
 
                 if (result.isSuccess && data != null) {
-                    _outputDataState.value = data.bytes.fromBase64()?.toString(Charsets.UTF_8) ?: ""
+                    _outputDataState.value = base64ToHex(data.bytes)
                 } else {
                     _outputDataState.value = result.exceptionOrNull()?.message ?: ""
                 }
@@ -50,5 +51,16 @@ class EncryptionViewModel @Inject constructor(
             encryptionRepository.changeCurrentUrl(url)
         }
     }
+
+    fun base64ToHex(base64String: String): String {
+        // Decode Base64 string to ByteArray
+        val bytes = Base64.getDecoder().decode(base64String)
+
+        // Convert ByteArray to Hex String
+        return bytes.joinToString(separator = "") { byte ->
+            "%02x".format(byte)
+        }
+    }
+
 
 }

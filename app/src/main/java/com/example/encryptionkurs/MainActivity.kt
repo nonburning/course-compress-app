@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun CompressItScreen(
 ) {
-    var inputText by remember { mutableStateOf(TextFieldValue("lorem ipsum")) }
+    var inputText by remember { mutableStateOf(TextFieldValue("")) }
     var chosenButton by remember {
         mutableStateOf(0)
     }
@@ -198,6 +198,16 @@ fun CompressItScreen(
                     fontFamily = jetFontFamily,
                     fontStyle = FontStyle.Italic
                 ),
+                placeholder = {
+                    Text(
+                        text = "lorem ipsum",
+                        fontFamily = jetFontFamily,
+                        fontWeight = FontWeight(400),
+                        fontStyle = FontStyle.Italic,
+                        modifier = Modifier.align(Alignment.Start),
+                        color = Color(0xff989898),
+                    )
+                },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = Color.Transparent,
                     unfocusedBorderColor = Color.Transparent,

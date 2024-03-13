@@ -49,8 +49,8 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient, sharedPreferences: SharedPreferences) = Retrofit.Builder()
-        .baseUrl(sharedPreferences.getString("api_url", "https://684a-77-121-152-86.ngrok-free.app/")
-            ?: "https://684a-77-121-152-86.ngrok-free.app/")
+        .baseUrl(sharedPreferences.getString("api_url", "https://7c6a-77-121-152-86.ngrok-free.app/")
+            ?: "https://7c6a-77-121-152-86.ngrok-free.app/")
         .addConverterFactory(json.asConverterFactory(contentType))
         .client(okHttpClient)
         .build()
